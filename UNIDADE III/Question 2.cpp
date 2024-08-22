@@ -1,140 +1,163 @@
 #include <iostream>
+#include <iomanip>
+#include <cmath>
 #include <string>
-#include <cstdlib> 
-#include <ctime>   
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+//Foi feito busca por ajuda para tentar fazer um layout de placarzinho
 
 class Sapo {
 private:
-    std::string nome;
-    std::string cor; // Atributo extra: definindo uma cor para os sapos baseado nos jogos do bom dia e companhia do SBT
-    int identificador;
-    int distanciaPercorrida; 
-    int quantidadePulosDados;
-    int quantidadeProvasDisputadas;
-    int vitorias;
-    int empates;
-    int quantidadeTotalPulosDados;
-    static int distanciaTotalCorrida; // estático
+	string nome;
+	int id;
+	int distPercorrida;
+	int pulosDados;
+	int provasDisputadas;
+	int vit;
+	int emp;
+	int der;
+	int pulosTotais;
 
 public:
-    // Utilizando o construtor
-    Sapo(std::string nome, std::string cor, int id) 
-        : nome(nome), cor(cor), identificador(id), distanciaPercorrida(0), quantidadePulosDados(0), 
-          quantidadeProvasDisputadas(0), vitorias(0), empates(0), quantidadeTotalPulosDados(0) {}
+	//atributo estatico publico
+	static int distanciaTotalCorrida;
+	//construtor
+	Sapo(const string& nome, int identificador) 
+		: nome(nome), id(identificador), distPercorrida(0), 
+		  pulosDados(0), provasDisputadas(0), vit(0), emp(0), der(0), pulosTotais(0) {}
 
-    // Utilizando getters
-    std::string getNome() const { return nome; }
-    std::string getCor() const { return cor; }
-    int getIdentificador() const { return identificador; }
-    int getDistanciaPercorrida() const { return distanciaPercorrida; }
-    int getQuantidadePulosDados() const { return quantidadePulosDados; }
-    int getQuantidadeProvasDisputadas() const { return quantidadeProvasDisputadas; }
-    int getVitorias() const { return vitorias; }
-    int getEmpates() const { return empates; }
+	//getters e setters
+	string getNome() const { return nome; }
+	void setNome(const string& nome) { this->nome = nome; }
 
-    // Método de pulo
-    void pular(int maxDistanciaPorPulo) {
-        int pulo = rand() % maxDistanciaPorPulo + 1; 
-        distanciaPercorrida += pulo;
-        quantidadePulosDados++;
-        quantidadeTotalPulosDados++;
-    }
+	int getId() const { return id; }
+	void setId(int id) { this->id = id; }
 
-    // Método inicio da corrida
-    void iniciarCorrida() {
-        distanciaPercorrida = 0;
-        quantidadePulosDados = 0;
-    }
+	int getDistPerco() const { return distPercorrida; }
+	void setDistPerco(int distancia) { this->distPercorrida = distancia; }
 
-    // Método sapo já venceu a corrida?
-    bool venceuCorrida() const {
-        return distanciaPercorrida >= distanciaTotalCorrida;
-    }
+	int getPulosDados() const { return pulosDados; }
+	void setPulosDados(int pulos) { this->pulosDados = pulos; }
 
-    // Vitórias
-    void incrementarVitoria() {
-        vitorias++;
-    }
+	int getProvasDisputadas() const { return provasDisputadas; }
+	void setProvasDisputadas(int provas) { this->provasDisputadas = provas; }
 
-    // Empates
-    void incrementarEmpate() {
-        empates++;
-    }
+	int getVitorias() const { return vit; }
+	void setVitorias(int vit) { this->vit = vit; }
 
-    // Método estático para definir a distância total da corrida
-    static void setDistanciaTotalCorrida(int distancia) {
-        distanciaTotalCorrida = distancia;
-    }
+	int getEmpates() const { return emp; }
+	void setEmpates(int emp) { this->emp = emp; }
+
+	int getDerrotas() const { return der; }
+	void setDerrotas(int der) { this->der = der; }
+
+	int getPulosTotais() const { return pulosTotais; }
+	void setPulosTotais(int pulos) { this->pulosTotais = pulos; }
+
+	//pular
+	void pular() {
+		int maxDistancia = 10; //deixar a distancia maxima do pulo em 10
+		int salto = rand() % maxDistancia + 1; //gera um numero aleatorio de 1 e 10
+		distPercorrida += salto;
+		pulosDados++;
+		pulosTotais++;
+	}
+	//disputar uma prova
+	void disputarProva(bool venceu, bool empatou) {
+		provasDisputadas++;
+		if (venceu) {
+			vit++;
+		} else if (empatou) {
+			emp++;
+		} else {
+			der++;//adicionando derrotas também 
+		}
+	}
+	//obter distancia total da corrida
+	static int getDistTotalCorr() {
+		return distanciaTotalCorrida;
+	}
+	//definir a distancia total da corrida
+	static void setDistTotalCorr(int distancia) {
+		distanciaTotalCorrida = distancia;
+	}
+	//exibir informacoes do sapo
+	void exibirInfo() const {
+		cout << setw(15) << nome
+			 << setw(15) << id
+			 << setw(20) << distPercorrida
+			 << setw(15) << pulosDados
+			 << setw(20) << provasDisputadas
+			 << setw(10) << vit
+			 << setw(10) << emp
+			 << setw(10) << der
+			 << setw(15) << pulosTotais
+			 << endl;
+	}
 };
 
-// atributo estático definido em 50 metros
-int Sapo::distanciaTotalCorrida = 50; 
+//inicializa o atributo estatico
+int Sapo::distanciaTotalCorrida = 0;
 
 int main() {
-    srand(static_cast<unsigned int>(time(0))); 
+	//inicializa a semente para numeros aleatorios
+	srand(static_cast<unsigned int>(time(nullptr))); 
 
-    // Número de sapos determinado em 3
-    Sapo sapo1("Sapo1", "vermelho", 1);
-    Sapo sapo2("Sapo2", "verde", 2);
-    Sapo sapo3("Sapo3", "amarelo", 3);
+	//gera a distancia total da corrida aleatoria entre 100 e 1000
+	//deixe entre 100 e 1000 pra corrida nao ficar tao grande 
+	int distanciaTotal = rand() % (1000 - 100 + 1) + 100;
+	Sapo::setDistTotalCorr(distanciaTotal);
 
-    // Parte do código que visa apostas esportivas (brincadeira, visa apenas a vibração do público XD)
-    std::cout << "Para qual sapo você irá torcer? Digite o número correspondente:" << std::endl;
-    std::cout << "1. Sapo1 (vermelho)" << std::endl;
-    std::cout << "2. Sapo2 (verde)" << std::endl;
-    std::cout << "3. Sapo3 (amarelo)" << std::endl;
+	//nao consegui fazer como que possam ser adicionados quantos sapos quiser 
+	Sapo sapo1("Sapo Verde", 1);
+	Sapo sapo2("Sapo Azul", 2);
 
-    int escolha;
-    std::cin >> escolha;
+	//simulando corrida ate que pelo menos um sapo atinja a distancia total
+	while (sapo1.getDistPerco() < Sapo::getDistTotalCorr() &&
+		   sapo2.getDistPerco() < Sapo::getDistTotalCorr()) {
+		sapo1.pular();
+		sapo2.pular();
+	}
 
-    Sapo* sapoEscolhido = nullptr;
+	//determina o resultado da corrida
+	if (sapo1.getDistPerco() >= Sapo::getDistTotalCorr() &&
+		sapo2.getDistPerco() >= Sapo::getDistTotalCorr()) {
+		//empate
+		sapo1.disputarProva(false, true);
+		sapo2.disputarProva(false, true);
+	} else if (sapo1.getDistPerco() >= Sapo::getDistTotalCorr()) {
+		//sapo 1 vence
+		sapo1.disputarProva(true, false);
+		sapo2.disputarProva(false, false);
+	} else {
+		//sapo 2 vence
+		sapo1.disputarProva(false, false);
+		sapo2.disputarProva(true, false);
+	}
 
-    switch (escolha) {
-        case 1:
-            sapoEscolhido = &sapo1;
-            break;
-        case 2:
-            sapoEscolhido = &sapo2;
-            break;
-        case 3:
-            sapoEscolhido = &sapo3;
-            break;
-        default:
-            std::cout << "Escolha inválida! A corrida será feita sem torcedores." << std::endl;
-            break;
-    }
+	//exibindo cabecalho
+	cout << left
+		 << setw(15) << "Nome"
+		 << setw(15) << "ID"
+		 << setw(20) << "Distancia"
+		 << setw(15) << "Pulos"
+		 << setw(20) << "Provas Disputadas"
+		 << setw(10) << "Vitorias"
+		 << setw(10) << "Empates"
+		 << setw(10) << "Derrotas"
+		 << setw(15) << "Pulos Totais"
+		 << endl;
 
-    
-    Sapo::setDistanciaTotalCorrida(50); 
+	cout << string(95, '-') << endl; //linha de separacao
 
-    // Simulando a corrida
-    while (!sapo1.venceuCorrida() && !sapo2.venceuCorrida() && !sapo3.venceuCorrida()) {
-        sapo1.pular(2); // máximo de 2 metros por pulo para cada sapo afim de deixar justo
-        sapo2.pular(2);
-        sapo3.pular(2);
+	//exibindo informacoes dos sapos lado a lado
+	sapo1.exibirInfo();
+	sapo2.exibirInfo();
 
-        std::cout << sapo1.getNome() << " (" << sapo1.getCor() << ") está na distância: " << sapo1.getDistanciaPercorrida() << " metros" << std::endl;
-        std::cout << sapo2.getNome() << " (" << sapo2.getCor() << ") está na distância: " << sapo2.getDistanciaPercorrida() << " metros" << std::endl;
-        std::cout << sapo3.getNome() << " (" << sapo3.getCor() << ") está na distância: " << sapo3.getDistanciaPercorrida() << " metros" << std::endl;
+	cout << "Distancia Total da Corrida: " << Sapo::getDistTotalCorr() << "\n";
 
-        
-        if (sapoEscolhido != nullptr) {
-            std::cout << "Seu sapo " << sapoEscolhido->getNome() << " (" << sapoEscolhido->getCor() << ") está na distância: " 
-                      << sapoEscolhido->getDistanciaPercorrida() << " metros" << std::endl;
-        }
-    }
-
-    // Determinando o sapo campeão
-    if (sapo1.venceuCorrida()) {
-        std::cout << sapo1.getNome() << " venceu a corrida!" << std::endl;
-        sapo1.incrementarVitoria();
-    } else if (sapo2.venceuCorrida()) {
-        std::cout << sapo2.getNome() << " venceu a corrida!" << std::endl;
-        sapo2.incrementarVitoria();
-    } else if (sapo3.venceuCorrida()) {
-        std::cout << sapo3.getNome() << " venceu a corrida!" << std::endl;
-        sapo3.incrementarVitoria();
-    }
-
-    return 0;
+	return 0;
 }
